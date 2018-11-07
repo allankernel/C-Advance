@@ -3299,6 +3299,252 @@ int main() {
 ——— output ————— 
 print 1 What a day
 
+———————————NAMESPACE  ———————————— 
+you might be writing some code that has a function called xyz() and there is another library available which is also having same function xyz(). Now the compiler has no way of knowing which version of xyz() function you are referring to within your code. namespace is designed o differentiate similar functions, classes, variables etc. with the same name available in different libraries
+
+#include <iostream>
+using namespace std;
+
+namespace first { //this namespace defined like a class
+  void fun(int i) { 
+    cout << "Value from first " << i << endl;
+  }
+}
+
+namespace second  { 
+  void fun(int i) {
+      cout << "Value from second " << i << endl;
+  }
+}
+
+int main() { 
+  first::fun(40) ;   // use :: to call the function within namespace
+  second::fun(50);
+  return 0;
+}
+———— output ————— 
+Value from first 40
+Value from second 50
+
+
+——————————— TEMPLATES———————————— 
+
+The concept of templates can be used in two different ways:
+
+1) Function Templates
+2) Class Templates
+
+The simple idea is to pass data type as a parameter so that we don’t need to write same code for different data types. For example a software company may need sort() for different data types. Rather than writing and maintaining the multiple codes, we can write one sort() and pass data type as a parameter. C++ adds two new keywords to support templates: ‘template’ and ‘typename’. The second keyword can always be replaced by keyword ‘class’. Templates are expanded at compiler time. This is like macros. The difference is, compiler does type checking before template expansion. The idea is simple, source code contains only function/class, but compiled code may contain multiple copies of same function/class.
+
+template <class T>
+T someFunction(T arg)
+{
+   ... .. ...
+}
+
+
+See diagram at https://www.geeksforgeeks.org/templates-cpp/
+
+#include <iostream>
+using namespace std;
+
+template <typename sample>
+sample function(sample x, sample y) { 
+  return (x > y) ? x: y;
+}
+
+int main() { 
+  cout << "Max of (4,7) --- " << function<int> (4,7) << endl;
+  cout << "Ascending order of A and P --- " << function<char> ('A','P') << endl;
+  cout << "Max of float(5.4,1.3) --- " << function<float> (5.4,1.3) << endl;
+  return 0;
+}
+————— output ———— 
+Max of (4,7) --- 7
+Ascending order of A and P --- P
+Max of float(5.4,1.3) --- 5.4
+
+
+———— Example of  Function Template ( passing a value) ———————— 
+
+#include <iostream>
+using namespace std;
+
+template <typename mytem>
+mytem fun1(mytem x, mytem y) { //defining int type function
+  return x * y;
+}
+
+template <typename mytem1> //defining second template accepting array type
+mytem1 fun2(mytem1 arr[], mytem1 i){ 
+  for (int j = 0; j < i ; j++) { 
+    cout << " Values of array " << arr[j] << endl;
+  }
+}
+
+int main() { 
+  int arr[] =  { 4,2,6,7,3,7};
+  int size = sizeof(arr)/ sizeof(int);
+  cout <<  fun1(4,5) << endl;
+  fun2(arr, size);
+  return 0;
+}
+
+——— output ———— 
+20
+ Values of array 4
+ Values of array 2
+ Values of array 6
+ Values of array 7
+ Values of array 3
+ Values of array 7
+
+———— Example of  Function Template ( call by reference ) ———————— 
+
+#include <iostream>
+using namespace std;
+
+template <typename T>
+  void swapfun( T &x , T &y) { 
+
+    T holdvalue;
+    holdvalue = y;
+    y = x;
+    x = holdvalue;
+
+  }
+int main() { 
+  int i1 = 100, i2 = 200; 
+  
+  cout << "Before Swap - " << i1 << ": " << i2 << endl;
+  swapfun( i1, i2) ;
+  cout << "Post Swap - " << i1 << ": " << i2 << endl;
+  return 0;
+} 
+
+—— output —— 
+Before Swap - 100: 200
+Post Swap - 200: 100
+
+
+———— Example of  Class Template ———————— 
+
+Class Templates Like function templates, class templates are useful when a class defines something that is independent of data type. Can be useful for classes like LinkedList, BinaryTre, Stack, Queue, Array, etc. Like function templates, you can also create class templates for generic class operations.Sometimes, you need a class implementation that is same for all classes, only the data types used are different. Normally, you would need to create a different class for each data type OR create different member variables and functions within a single class. In below declaration -  T is the template argument which is a placeholder for the data type used.
+
+Inside the class body, a member variable var and a member function someOperation() are both of type T.
+
+template <class T>
+class className
+{
+   ... .. ...
+public:
+   T var;
+   T someOperation(T arg);
+   ... .. ...
+};
+
+To create a class template object, you need to define the data type inside a < > when creation
+className<dataType> classObject;
+
+—————— Example —————— 
+#include <iostream>
+using namespace std;
+
+template <class T>
+class calculator { 
+  public : 
+    T num1;
+    T num2;
+    T result;
+      
+    calculator(T x, T y) { 
+      num1 = x;
+      num2 = y;
+    }
+
+    T addition() { 
+      return result = num1 + num2;
+    }
+ 
+};
+
+int main() { 
+
+  calculator<int> obj1(2,4);
+  cout << " Addition int value : " << obj1.addition() << endl;
+  calculator<float> obj2(4.3, 5.3);
+  cout << " Addition float value : " << obj2.addition() << endl;
+  
+  return 0;
+}
+
+——————— output —— 
+ Addition int value : 6
+ Addition float value : 9.6
+
+—————— Can there be more than one arguments to templates?— YES ———— 
+
+#include <iostream>
+using namespace std;
+
+template <class T , class S >
+class calculator {
+    public :
+    T x;
+    S y;
+    S result;
+    
+    calculator(T n1, S n2) {
+        x = n1;
+        y = (T) n2; //This is casting from float to int
+    }
+    
+    S addition() {
+        return result =  x + y;
+    }
+};
+
+int main() {
+    calculator<int,float> obj1(3,2.5);  //here 3,2 is for constructor feed.
+    cout << " Addition of 2 numbers - " << obj1.addition() << endl;
+    return 0;
+}
+———— output ———— 
+ Addition of 2 numbers - 5.5
+
+
+———————— Can we pass nontype parameters to templates? ———————— 
+#include <iostream> 
+using namespace std; 
+   
+template <class T, int max> 
+int arrMin(T arr[], int n) 
+{ 
+   int m = max; 
+   for (int i = 0; i < n; i++) 
+      if (arr[i] < m) 
+         m = arr[i]; 
+   return m; 
+} 
+   
+int main() 
+{ 
+   int arr1[]  = {10, 20, 15, 12}; 
+   int n1 = sizeof(arr1)/sizeof(arr1[0]); 
+   
+   char arr2[] = {1, 2, 3}; 
+   int n2 = sizeof(arr2)/sizeof(arr2[0]); 
+   
+   // Second template parameter to arrMin must be a constant 
+   cout << arrMin<int, 10000>(arr1, n1) << endl; 
+   cout << arrMin<char, 256>(arr2, n2)  << endl; 
+   return 0; 
+} 
+————output ——— 
+10
+1
+
+
 ——————————— Void pointers ———————————— 
 This is a special type of pointer available in C++ which represents absence of type. void pointers are pointers that point to a value that has no type (and thus also an undetermined length and undetermined dereferencing properties).
 This means that void pointers have great flexibility as it can point to any data type. There is payoff for this flexibility. These pointers cannot be directly dereferenced. They have to be first transformed into some other pointer type that points to a concrete data type before being dereferenced.
@@ -4193,12 +4439,271 @@ For unordered_set many function are defined among which most useful are size and
 The Unordered_set allows only unique keys, for duplicate keys unordered_multiset should be used.
 
 
+#include <bits/stdc++.h> 
+using namespace std; 
+
+int main() { 
+ 
+  unordered_set<string> stringpool;
+
+  stringpool.insert("This");
+  stringpool.insert("is"); 
+  stringpool.insert("my");
+  stringpool.insert("updated");
+  stringpool.insert("text");
+  
+  string key = "what"; //"key" word is fixed.
+  //find returns end iterator if key is not found, 
+  //  else it returns iterator to that key 
+  if (stringpool.find(key) == stringpool.end())
+      cout << "Not Found " << key << endl;
+  else
+      cout << "Found " << key << endl;
+  key = "my";
+  if (stringpool.find(key) == stringpool.end())
+      cout << "Not Found " << key << endl;
+  else
+      cout << "Found " << key << endl;
+
+  unordered_set<string> :: iterator i ;
+  for (i = stringpool.begin() ; i != stringpool.end() ; i++ ) { 
+      cout << *i << endl;
+  }
+  return 0;
+}
+——— output ——— 
+Not Found what
+Found my
+text
+updated
+my
+is
+This
+
+———————— Finding duplicates using unordered_Set ———————— 
+
+#include <bits/stdc++.h>  
+using namespace std;
+
+void printdup(int arr[], int i) { 
+int j;
+unordered_set<int> intset;
+unordered_set<int> duplicates;
+
+for(j=0 ; j< i; j++ ) { 
+  if ( intset.find(arr[j]) == intset.end()) //always check if iterator reaches at the end first, else other condition
+    intset.insert(arr[j]);
+  else 
+    duplicates.insert(arr[j]);
+}
+unordered_set<int> :: iterator loopcount;
+for(loopcount = duplicates.begin() ; loopcount != duplicates.end() ; loopcount++) 
+    cout << "Duplicates are : " << *loopcount << endl;
+}
+
+int main() { 
+
+int arr[] = { 10, 29 , 20,10,80,29,32,80,30};
+int size = sizeof(arr) / sizeof(int); 
+printdup(arr , size);
+
+  return 0;
+
+}
+
+————— output ——— 
+Duplicates are : 80
+Duplicates are : 29
+Duplicates are : 10
+
+————————— Signal Handling ——————— 
+C++ signal-handling library provides function signal to trap unexpected events.
+
+SIGABRT - Abnormal termination of the program, such as a call to abort.
+SIGFPE - An erroneous arithmetic operation, such as a divide by zero or an operation resulting in overflow.
+SIGILL - Detection of an illegal instruction.
+SIGINT - Receipt of an interactive attention signal.
+SIGSEGV - An invalid access to storage.
+SIGTERM - A termination request sent to the program.
+
+
+void (*signal (int sig, void (*func)(int)))(int); 
+
+—————— Example - simple user manual interruption —————— 
+#include <iostream>
+#include <csignal>
+#include <unistd.h>
+#include <stdlib.h>
+using namespace std;
+
+
+void signalprocess(int signum) { 
+  cout << "Signal received" << signum << endl;
+  exit(signum);
+}
+int main() { 
+  signal(SIGINT, signalprocess);
+  while(1) { 
+    cout << " We are sleeping right now "  << endl;
+    sleep(1);
+  }
+  return 0;
+}
+——— output ——— 
+ We are sleeping right now 
+ We are sleeping right now 
+ We are sleeping right now 
+^CSignal received2
+
+—————— Example - preconfigured system interruption using Raise—————— 
+#include <iostream>
+#include <csignal>
+
+using namespace std;
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received.\n";
+
+   // cleanup and close up stuff here  
+   // terminate program  
+
+   exit(signum);  
+}
+
+int main () {
+   int i = 0;
+   // register signal SIGINT and signal handler  
+   signal(SIGINT, signalHandler);  
+
+   while(++i) {
+      cout << "Going to sleep...." << endl;
+      if( i == 3 ) {
+         raise( SIGINT);
+      }
+      sleep(1);
+   }
+
+   return 0;
+}
+
+—————————— Lambda Expressions ——————————— 
+ 
+[ captures ] (parameters) -> returnTypesDeclaration { lambdaStatements; }
+
+
+[ captures ]: The capture clause, also known as the lambda introducer, specifies which outside variables are available for the lambda function and whether they should be captured by value (copying) or by reference. You will always be able to identify the start of a lambda expression with the presence of the capture clause. An empty capture clause [] means capture nothing, in which case the lambda expression body doesn't access variables in the enclosing scope.
+
+( parameters ): This is the optional parameters list, also known as the lambda declarator. You can omit the parameters list if you want a function that takes zero arguments.
+
+-> returnTypeDeclaration: This is the return type. Most of the time, compilers can deduce the return type of the lambda expression when you have zero or one return statement. However, if it makes it easier to understand the code, you can specify the return type.
+
+{ lambdaStatements; }: This is the lambda body. The statements within the lambda body can access the captured variables and the parameters.
+
+
+#include <iostream>
+using namespace std;
+int main()
+  {
+      auto lambda = []( int x , int y)  -> int {  return x + y; };  //here ( int x , int y) is parameters, -> int is return type and return x + y is the lambda statements.
+      cout << lambda(3 ,4) << endl;
+      return 0;
+  }
+
+
+
+——————— ———— Posix thread—————————— 
+
+POSIX Threads, or Pthreads, is a POSIX standard for threads. Use pthread.h header file and add -lpthread during execution of the program. main() program is a single, default thread. All other threads must be explicitly created by the programmer.
+1. Thread management - create, detach , join. Joinable, etc 
+2. Mutexes - synchronization, locking , unlocking etc 
+3. Condition variables - communication between threads that share mutex
+4. Synchronisation - routines that manage read/write locks and barriers.
+
+
+pthread_create (pthread_t *thread,        // pointer to pthread_t structure . When a thread is created, an identifier is written to the memory location to which this variable points. This identifier enables us to refer to the thread.
+
+			 pthread_attr_t *attr,    // An attribute object that may be used to set thread attributes.
+			 void *(*start_routine)(void *),   // The routine that the thread will execute once it is created. We should pass the address of a function taking a pointer to void as a parameter and the function will return a pointer to void. So, we can pass any type of single argument and return a pointer to any type. 
+			 void *arg)    // A single argument that may be passed to start_routine. It must be passed as a void pointer 
+
+—————— Simple Thread Management Example - ———— 
+
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void *worker_thread(void *arg)
+{
+       printf("This is worker_thread()\n");
+       pthread_exit(NULL);
+}
+
+int main()
+{
+       pthread_t my_thread; 
+
+       printf("In main: creating thread\n");
+       pthread_create(&my_thread, NULL, &worker_thread,  NULL);
+
+       pthread_exit(NULL);
+}
+————— output ———— 
+In main: creating thread
+This is worker_thread()
+
+———————————————— Multi-threading —————————————— 
+
+Multithreading is a specialised form of multitasking and a multitasking is the feature that allows your computer to run two or more programs concurrently. In general, there are two types of multitasking: process-based and thread-based. Process-based multitasking handles the concurrent execution of programs. Thread-based multitasking deals with the concurrent execution of pieces of the same program.
+
+Std::thread is the thread class that represents a single thread in C++. To start a thread we simply need to create a new thread object and pass the executing code to be called (i.e, a callable object) into the constructor of the object. Once the object is created a new thread is launched which will execute the code specified in callable.
+
+A callable can be either of the three
+
+A function pointer
+A function object
+A lambda expression
+After defining callable, pass it to the constructor.
+
+import<thread> 
+std::thread thread_object(callable) 
+
+1) Callable Function Pointer = 
+void foo(param) 
+{ 
+	// Do something 
+} 
+
+// The parameters to the function are put after the comma 
+std::thread thread_obj(foo, params); 
+
+2) Callable Function Object  = 
+// Define the class of function object 
+class fn_object_class { 
+    // Overload () operator 
+    void operator()(params) 
+    { 
+        // Do Something 
+    } 
+} 
+  
+// Create thread object 
+std::thread thread_object(fn_class_object(), params) 
+
+3) Callable Lambda Expression = 
+// Define a lamda expression 
+auto f = [](params) { 
+	// Do Something 
+}; 
+
+// Pass f and its parameters to thread 
+// object constructor as 
+std::thread thread_object(f, params); 
 
 
 
 
-——————— ———— Web programming —————————— 
-To understand the concept of CGI, let's see what happens when we click a hyperlink to browse a particular web page or URL.Your browser contacts the HTTP web server and demand for the URL ie. filename.
+——————— ———— CGI - Web programming —————————— 
+Before you proceed with CGI Programming, make sure that your Web Server supports CGI and it is configured to handle CGI Programs. All the CGI Programs to be executed by the HTTP server are kept in a pre-configured directory. This directory is called CGI Directory and by convention it is named as /var/www/cgi-bin. By convention, CGI files have extension as. cgi, but you can keep your files with python extension .py as well.To understand the concept of CGI, let's see what happens when we click a hyperlink to browse a particular web page or URL.Your browser contacts the HTTP web server and demand for the URL ie. filename.
 
 Web Server will parse the URL and will look for the filename. If it finds requested file then web server sends that file back to the browser otherwise sends an error message indicating that you have requested a wrong file.Web browser takes response from web server and displays either the received file or error message based on the received response.However, it is possible to set up the HTTP server in such a way that whenever a file in a certain directory is requested, that file is not sent back; instead it is executed as a program, and produced output from the program is sent back to your browser to display.
 
@@ -4344,16 +4849,55 @@ int main () {
 You must have come across many situations when you need to pass some information from your browser to web server and ultimately to your CGI Program. Most frequently browser uses two methods to pass this information to web server. The GET method is the default method to pass information from browser to web server and it produces a long string that appears in your browser's Location.
 
 
+———————————— API Requests using Python ————————— 
+//https://www.pythonforbeginners.com/requests/using-requests-in-python
+Requests is an Apache2 Licensed HTTP library, written in Python. Requests will allow you to send HTTP/1.1 requests using Python. With it, you can add content like headers, form data, multipart files, and parameters via simple Python libraries. It also allows you to access the response data of Python in the same way.
+
+———————— GET requests using Requests library —
+
+import requests
+# api-endpoint
+URL = "http://maps.googleapis.com/maps/api/geocode/json"
+# location given here
+location = "delhi technological university"
+# defining a params dict for the parameters to be sent to the API
+PARAMS = {'address': location}
+# sending get request and saving the response as response object
+r = requests.get(url=URL, params=PARAMS)
+# extracting data in json format
+data = r.json()
+print(data)
 
 
+———————— POST requests using Requests library —
 
-
-
-
-
-
-
-
+# importing the requests library 
+import requests 
+# defining the api-endpoint  
+API_ENDPOINT = "http://pastebin.com/api/api_post.php"
+# your API key here 
+API_KEY = "XXXXXXXXXXXXXXXXX"
+  
+# your source code here 
+source_code = ''' 
+print("Hello, world!") 
+a = 1 
+b = 2 
+print(a + b) 
+'''
+  
+# data to be sent to api 
+data = {'api_dev_key':API_KEY, 
+        'api_option':'paste', 
+        'api_paste_code':source_code, 
+        'api_paste_format':'python'} 
+  
+# sending post request and saving response as response object 
+r = requests.post(url = API_ENDPOINT, data = data) 
+  
+# extracting response text  
+pastebin_url = r.text 
+print("The pastebin URL is:%s"%pastebin_url) 
 
 
 
