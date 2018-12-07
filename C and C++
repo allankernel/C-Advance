@@ -1,7 +1,7 @@
 ———— Advance C programming - https://www.sanfoundry.com/advanced-c-programming-training/
 https://pebble.gitbooks.io/learning-c-with-pebble/content/chapter10.html
 
-Compile c program use - cc code.c -o c
+Compile c program use - gcc code.c -o c
 ./c  —> to run program 
 Compile c++ program use g++ code.cpp
 > ./a.out  —> to run the program
@@ -78,7 +78,7 @@ int main() {
 }
 
 —output — 
-value to be printed c
+value to be printed 1
 
 ——————————— pass function by value(. Is used)  and by reference (-> used) but in case of pointer data and reference both uses -> 
    ———————— 
@@ -185,9 +185,9 @@ print structure data 100 , 200 , product
 https://www.thegeekstuff.com/2011/12/c-pointers-fundamentals
 
 	•	    Constant pointer and pointer to constant.
-	•	    Pointer to pointer with an example
-	•	    Array of pointers with an example
-	•	    Pointer to functions with an example
+	•	    Pointer to pointer  
+	•	    Array of pointers  
+	•	    Pointer to functions  
 
 ——————————— For constant pointer and pointer constant , try below rule to remember  ——————— 
 A C P ( Address cannot be changed - Constant - Pointer ) 
@@ -273,8 +273,25 @@ int main(void)
     fptr(2,3); 
     return 0;
 }
+—————————— How to pass class to function ——————— 
+#include <iostream>
+using namespace std;
+class myclass{ 
+  public : 
+    int id = 20;
+};
 
+void fun(myclass *b) { 
+  cout << "class passed to function" << b->id << endl;
+}
 
+int main() { 
+  myclass *c = new myclass();
+  fun(c);
+  return 0;
+}
+————— output ——— 
+class passed to function. 20
 ————————————— 
 int main(void) 
 { 
@@ -1522,7 +1539,7 @@ struct {
     unsigned int age : 4; 
     //here 4 means bits expressed in 2^4 = 16 so upto 0-15 values compiler will
     //take. example below it will print all 4,8 but only 15.0 instead of 15.2 since bits 
-    //can store 16 values only(0-15) so .2 is ignored. Try int agt : 5 then it will print upto 0-31
+    //can store 16 values only(0-15) so .2 is ignored. Try int age : 5 then it will print upto 0-31
 } Age;
 
 /* example in structure below - unnamed bit field can be used to push boundary to next slot example 2^4
@@ -1785,14 +1802,6 @@ array - Gonsalves
 
 —————————————————— Two dimensional array——————————— 
 
-Internally, arrays aren’t treated specially, they are decomposed into pointers and operated there-on. For example an array like :
-char arr[10];
-When accessed like :
-arr[4] = 'e';
-is decomposed as :
-*(arr + 4) = 'e'
-
-————————— example —— 
 #include <stdio.h>
 #include <string.h>
 
@@ -1835,6 +1844,10 @@ array shown - 2
 
 
 ————————————— C ++ ——————————————————
+To run program use below command 
+
+> g++ <name of the program > -std=c++11   //add -std=c++11 only if you get error on compiler 
+> ./a.out 		// to run program 
 
 ———————— Simple data types printing —————————— 
 #include <iostream>
@@ -2093,6 +2106,106 @@ int main() {
 Please enter your name: Alan
 Your name is: Alan
 Error message : this will be buffered
+
+——————— ———— NEW KEYWORD AND OPERATOR ——————— ———— 
+When you create a new object, memory is allocated using operator new function and then the constructor is invoked to initialize the memory. Here, The new operator does both the allocation and the initialization, where as the operator new only does the allocation.
+
+——————— ———— NEW KEYWORD  ——————— ———— 
+The new operator is an operator which denotes a request for memory allocation on the Heap. If sufficient memory is available, new operator initializes the memory and returns the address of the newly allocated and initialized memory to the pointer variable. When you create an object of class using new keyword(normal new).
+
+The memory for the object is allocated using operator new from heap.
+The constructor of the class is invoked to properly initialize this memory.
+
+#include<iostream> 
+using namespace std; 
+class car 
+{ 
+    string name; 
+    int num; 
+    public: 
+        car(string a, int n) 
+        { 
+            cout << "Constructor called" << endl; 
+            this ->name = a; 
+            this ->num = n; 
+        } 
+        void display() 
+        { 
+            cout << "Name: " << name << endl; 
+            cout << "Num: " << num << endl; 
+        } 
+}; 
+int main() 
+{ 
+    // Using new keyword 
+    car *p = new car("Honda", 2017); 
+    p->display(); 
+} 
+——— output ——— 
+Constructor called
+Name: Honda
+Num: 2017
+——————— ———— NEW OPERATOR  ——————— ———— 
+Operator new is a function that allocates raw memory and conceptually a bit similar to malloc().
+It is the mechanism of overriding the default heap allocation logic.
+It doesn’t initializes the memory i.e constructor is not called. However, after our overloaded new returns, the compiler then automatically calls the constructor also as applicable.
+It’s also possible to overload operator new either globally, or for a specific class
+
+#include<iostream> 
+#include<stdlib.h> 
+  
+using namespace std; 
+class car 
+{ 
+    string name; 
+    int num; 
+  
+    public: 
+        car(string a, int n) 
+        { 
+            cout << "Constructor called" << endl; 
+            this->name = a; 
+            this->num = n; 
+        } 
+        void display() 
+        {  
+            cout << "Name: " << name << endl; 
+            cout << "Num: " << num << endl; 
+        } 
+        void *operator new(size_t size) 
+        { 
+            cout << "new operator overloaded" << endl; 
+            void *p = malloc(size); 
+            return p; 
+        } 
+        void operator delete(void *ptr) 
+        { 
+            cout << "delete operator overloaded" << endl; 
+            free(ptr); 
+        } 
+}; 
+  
+int main() 
+{ 
+    car *p = new car("HYUNDAI", 2012); 
+    p->display(); 
+    delete p; 
+} 
+———— output ————— 
+new operator overloaded
+Constructor called
+Name: HYUNDAI
+Num: 2012
+delete operator overloaded
+—————————— DIFFERENCE BETWEEN NEW KEYWORD AND OPERATOR ————————— 
+New operator vs operator new
+
+Operator vs function: new is an operator as well as a keyword whereas operator new is only a function.
+New calls “Operator new”: “new operator” calls “operator new()” , like the way + operator calls operator +()
+“Operator new” can be Overloaded: Operator new can be overloaded just like functions allowing us to do customized tasks.
+Memory allocation: ‘new expression’ call ‘operator new’ to allocate raw memory, then call constructor.
+
+
 ————————————— *this pointer ————————————— 
  this pointer is used to represent the address of an object inside a member function. For example, consider an object obj calling one of its member function say method() as obj.method(). Then, this pointer will hold the address of object obj inside the member function method(). 
 It should be noted that, friend function and static function cannot have this pointer. It's because friend function is not a member function of the class. 
@@ -2522,7 +2635,7 @@ class Distance {
       cout << "Height  : " << height << endl;
     }
 
-  Distance operator * () { 					// here class is used as return type 
+  Distance operator - () { 					// here class is used as return type 
       length = length * 2;    //here operator is - and actual operation is multipilcation , so doesnt matter
       height = height * 2;
       return Distance( length, height);
@@ -2531,7 +2644,7 @@ class Distance {
 }; 
 int main() {
   Distance obj(30, 40);
-  *obj;   
+  -obj;   
   obj.printall() ;
   return 0;
 }
@@ -2630,14 +2743,73 @@ Value of A[5] : 5
 Value of A[12] : Index out of bounds
 0
 
-————————————— Scenario  —  Class Member Access Operator (->) Overloading —————————— 
+————————————— Scenario  1 —  Class Member Access Operator (->) Overloading —————————— 
 
 The class member access operator (->) can be overloaded but it is bit trickier. It is defined to give a class type a "pointer-like" behavior. The operator -> must be a member function. If used, its return type must be a pointer or an object of a class to which you can apply. 
 The operator-> is used often in conjunction with the pointer-dereference operator * to implement "smart pointers." These pointers are objects that behave like normal pointers except they perform other tasks when you access an object through them, such as automatic object deletion either when the pointer is destroyed, or the pointer is used to point to another object.
 
+#include <iostream>
+using namespace std;
 
+class Marks {
+  int mark;
+  public:
+    Marks(int m){
+      mark = m;
+    }
 
+      void whatsYourMark(){
+      cout << "hey i got "<< mark <<" marks" << endl;
+      }
 
+      Marks *operator->(){
+      return this;
+      }
+};
+
+int main()
+{
+  Marks anilsmark(65);
+  anilsmark.whatsYourMark();
+  anilsmark->whatsYourMark();
+  return 0;
+}
+————— output —————— 
+hey i got 65 marks
+hey i got 65 marks
+
+——————————— Scenario 2 - Class Member Assess Operator (->) overloading ———————— 
+#include <iostream>
+#include <string>
+using namespace std;
+
+class getdetails {  
+public : 
+  string name = "Alan Gonsalves";
+  void getmarmks(int s) { 
+    cout << "My score is - " << s << endl; 
+  }
+  void myname(string n) { 
+      cout << "Name is " << n << endl;
+  }
+getdetails *operator->() { 
+    return this ;
+}
+
+};
+
+int main() { 
+  getdetails c1;
+  c1->getmarmks(300);   		// so class object c1 is assessing function indirectly using -> operator.
+  c1->myname("Rick Goru") ;	// so class object c1 is assessing different function indirectly using -> operator.
+  cout << "Print name now --> " << c1->name << endl;    	// so class object c1 is assessing parameter member function indirectly using -> operator.
+  return 0;
+}
+
+———— output ————— 
+My score is - 300
+Name is Rick Goru
+Print name now --> Alan Gonsalves
 ————————————— Scenario  —  Overloading operator Function call operator  —————————————— 
 
 #include <iostream>
@@ -2851,6 +3023,8 @@ int main() {
 print final output 30
 image is 7
 ——————————————— How to use virtual keyword - with pointer and address —————————————— 
+A virtual function a member function which is declared within base class and is re-defined (Overriden) by derived class. When you refer to a derived class object using a pointer or a reference to the base class, you can call a virtual function for that object and execute the derived class's version of the function.
+
 #include <iostream> 
 using namespace std;
  
@@ -2971,6 +3145,28 @@ int main(void) {
 —————— output —— 
 Total Rectangle area: 35
 Total Triangle area: 17
+
+———————————— Virtual destructor———————————— 
+Even though destructors are not inherited, if a base class declares its destructor virtual, the derived destructor always overrides it. This makes it possible to delete dynamically allocated objects of polymorphic type through pointers to base.
+
+class Base {
+ public:
+    virtual ~Base() { /* releases Base's resources */ }
+};
+ 
+class Derived : public Base {
+    ~Derived() { /* releases Derived's resources */ }
+};
+ 
+int main()
+{
+    Base* b = new Derived;
+    delete b; // Makes a virtual function call to Base::~Base()
+              // since it is virtual, it calls Derived::~Derived() which can
+              // release resources of the derived class, and then calls
+              // Base::~Base() following the usual order of destruction
+}
+
 ———————————————— Abstraction and Encapsulation ————————— 
 Data abstraction refers to providing only essential information to the outside world and hiding their background details, i.e., to represent the needed information in program without presenting the details. Below class adds numbers together, and returns the sum. The public members - addNum and getTotal are the interfaces to the outside world and a user needs to know them to use the class. The private member total is something that the user doesn't need to know about, but is needed for the class to operate properly.
 
@@ -4609,6 +4805,638 @@ int main()
       return 0;
   }
 
+—————————— CONSTANT  ——————————— 
+A function becomes const when const keyword is used in function’s declaration. The idea of const functions is not allow them to modify the object on which they are called. It is recommended practice to make as many functions const as possible so that accidental changes to objects are avoided.
+
+
+#include<iostream> 
+using namespace std; 
+  
+class Test { 
+    int value; 
+public: 
+    Test(int v = 0) {value = v;} 
+      
+    // We get compiler error if we add a line like "value = 100;" 
+    // in this function. 
+    int getValue() const {
+    //value = 10 this wil fail , not allowed to change
+    return value;
+    }   
+}; 
+  
+int main() { 
+    Test t(20); 
+    cout<<t.getValue(); 
+    return 0; 
+} 
+———— Output ————— 
+20 
+—————————— CONST CAST  ——————————— 
+#include <iostream> 
+class myclass{ 
+    
+};
+int main() { 
+  const myclass *c1 = new myclass() ;
+  myclass *c2 = c1;       //this is not allowed since c1 is constant
+  myclass *c2 = const_cast<myclass*> (c1); //to fix above error, use casting of constant, here casting to myclass
+  delete c1;
+  return 0;
+}
+
+—————————— STATIC CAST ( HAPPENS AT COMPILE TIME) ——————————— 
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+class B{} ;
+class D : public B{};
+class E : public B{};
+
+int main() { 
+  B* b1 = new D;
+//E* e1 = new b1;  //this is not allowed so fix issue below
+  E* e1 = static_cast<E*> (b1); //here casting b1 to e1 . this will happen at compile time
+  //static means compile time
+  return 0;
+}
+
+— example below where return of square root can be integer , or long or double .. if we don’t tell compiler what we need then it gives error
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int main() { 
+  int i = 25;
+//d = sqrt(i) //this will throw error at compile time 
+  double d = sqrt(static_cast<double>(i)); 
+  cout << d << endl;
+  return 0;
+}
+—————————— DYNAMIC CAST  ( RUN TIME TYPE IDENTIFICATION ) ——————————— 
+This is mainly between base and derived class. RTTI is short for Run-time Type Identification. When dealing with polymorphism, you’ll often encounter cases where you have a pointer to a base class, but you want to access some information that exists only in a derived class. RTTI is to provide a standard way for a program to determine the type of object during runtime. In other words, RTTI allows programs that use pointers or references to base classes to retrieve the actual derived types of the objects to which these pointers or references refer.
+
+RTTI is provided through two operators:
+
+1. The typeid operator, which returns the actual type of the object referred to by a pointer (or a reference).
+2. The dynamic_cast operator, which safely converts from a pointer (or reference) to a base type to a pointer (or reference) to a derived type.
+
+In below program, function getObject() always returns a Base pointer, but that pointer may be pointing to either a Base or a Derived object. In the case where the pointer is pointing to a Derived object, how would we call Derived::getName()?
+
+One way would be to add a virtual function to Base called getName() (so we could call it with a Base object, and have it dynamically resolve to Derived::getName()). But what would this function return if you called it with a Base object? There isn’t really any value that makes sense.  C++ provides a casting operator named dynamic_cast that can be used for just this purpose , using a dynamic_cast to convert our Base pointer back into a Derived pointer.
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Base {
+  protected : 
+    int m_value;
+  public: 
+    Base(int value) : m_value(value) { }
+    virtual ~Base() { } //this is required when we do dynamic_cast
+};
+
+class Derived : public Base {
+  protected: 
+    string m_name;
+  public: 
+    Derived(int value, string name) : Base(value), m_name(name){ 
+    cout << "From Derived constructor" << endl;
+    }
+    string getName() { return m_name; }
+};
+
+Base* getObject(bool bReturnDerived) { //this function wil return Derived class 
+    if (bReturnDerived)
+      return new Derived(1,"Alan");  //new is to get memory allocated
+    else
+      return new Base(2);
+}
+
+int main()  { 
+  Base *b = getObject(true); //even if we get memory allocated of derived , pointer is at base class only
+
+  Derived* d = dynamic_cast<Derived*>(b); //here pointer is now casted to Derived which will solve below issue
+
+  cout << "Derived class getName function - " << d->getName() << '\n'; //will give error - class base has no getName
+  delete b;     //release memory 
+  return 0;
+}
+
+———— output —— 
+From Derived constructor
+Derived class getName function - Alan
+
+The above example works because b is actually pointing to a Derived object, so converting b into a Derived pointer is successful. However, we’ve made quite a dangerous assumption: that b is pointing to a Derived object. What if b wasn’t pointing to a Derived object? This is easily tested by changing the argument to getObject() from true to false. In that case, getObject() will return a Base pointer to a Base object. When we try to dynamic_cast that to a Derived, it will fail, because the conversion can’t be made. Rule: Always ensure your dynamic casts actually succeeded by checking for a null pointer result.
+
+—————————— DOWN CASTING WITH STATIC CAST  ——————————— 
+As seen above , Dynamic cast is at runtime and it does check which class it is using for final printing cout but static cast does not do any check of the class so there will be issue if Base class isn’t pointing to Derived then program will crash. Static cast does not do any of that check thats why we have to do extra check as shown below which is not required had it been dynamic cast. In case of dynamic cast we just checked if d is not null pointer but in case of static cast we need to check if class is Derived only to proceed with cout printing statement 
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+enum DB { BASE, DERIVED };
+class Base { 
+public:
+  virtual ~Base() { }
+  virtual DB getclassid() { return BASE; }
+};
+
+class Derived : public Base {  
+protected:
+  string m_name;
+public:
+  Derived(string name) : m_name(name) { }
+  string getName() { return m_name; }
+  virtual DB getclassid() { return DERIVED; }
+};
+
+Base* GetObject(bool bReturnclass) { 
+  if(bReturnclass)
+    return new Derived("Apple");
+  else
+    return new Base(); 
+};
+
+int main() { 
+  Base* b = GetObject(true);
+  if (b->getclassid() == DERIVED) { //this is required cause static cast will not check if Base is pointed to some other class
+    Derived* d = static_cast<Derived*>(b); 
+    cout << "Name of the derived is " << d->getName() << '\n';
+  }
+  
+  return 0;
+}
+———— output ——— 
+Name of the derived is Apple
+
+—————————— DYNAMIC CAST  WITH REFERENCE——————————— 
+
+Because C++ does not have a “null reference”, dynamic_cast can’t return a null reference upon failure. Instead, if the dynamic_cast of a reference fails, an exception of type std::bad_cast is thrown.
+
+#include <iostream>
+#include <string>
+ 
+class Base{
+protected:
+	int m_value;
+public:
+	Base(int value)
+		: m_value(value){ }
+	virtual ~Base() {}
+};
+ 
+class Derived : public Base{
+protected:
+	std::string m_name;
+public:
+	Derived(int value, std::string name)
+		: Base(value), m_name(name){}
+ 
+	const std::string& getName() { return m_name; }
+};
+ 
+int main(){
+	Derived apple(1, "Apple"); // create an apple
+	Base &b = apple; // set base reference to object
+	Derived &d = dynamic_cast<Derived&>(b); // dynamic cast using a reference instead of a pointer
+	std::cout << "The name of the Derived is: " << d.getName() << '\n';  
+	return 0;
+}
+——— output ——— 
+The name of the Derived is: Apple
+
+—————————— REINTERPRET CAST  ——————————— 
+It is used to convert one pointer of another pointer of any type, no matter either the class is related to each other or not. It does not check if the pointer type and data pointed by the pointer is same or not. This is very dangerous casting, not recommended to use.
+
+
+#include <iostream> 
+using namespace std; 
+  
+int main() 
+{ 
+    int* p = new int(65); 
+    char* ch = reinterpret_cast<char*>(p); 
+    cout << *p << endl; 
+    cout << *ch << endl; 
+    cout << p << endl; 
+    cout << ch << endl; 
+    return 0; 
+} 
+
+—— output ——— 
+65
+A
+0x2353010
+A
+—— class Reinterpret cast  ——— 
+#include <iostream>
+using namespace std;
+
+class A { 
+  public : 
+    void fun_A() { 
+      cout << " From Class A - Function " << endl ; }
+};
+
+class B { 
+  public:
+    void fun_B() { 
+      cout << "From class B function " << endl; }
+};
+
+int main() { 
+  A *o1 = new A(); 
+
+  B* o2 = reinterpret_cast<B*> (o1);
+  o2->fun_B();
+  
+  return 0;
+}
+—————— output ———— 
+From class B function 
+
+
+—————————— TYPEID ——————————— 
+
+#include <iostream>
+#include <typeinfo>
+using namespace std;
+class Animal{
+    public:
+        virtual void display(){}
+};
+
+class Cow:public Animal{};
+class Dog:public Animal {};
+
+int main(){
+    Animal *anm;
+    Cow cw;
+    Dog dg;
+
+    cout << "type of anm is : "<<typeid(anm).name()<<endl;
+    cout << "type of cw is : "<<typeid(cw).name()<<endl;
+    cout << "type of dg is : "<<typeid(dg ).name()<<endl;
+
+    //after initializing base pointer with address of derived class object
+    anm = &cw; //assigns anm with address of cw.since Animal is virtual, anm is now type of //Cow
+    cout<<"type of  *anm when pointing to cw is: "<<typeid(*anm).name()<<endl;
+    anm = &dg;
+    cout<<"type of  *anm when pointing to dg is: "<<typeid(*anm).name()<<endl;
+}
+————— output ————— in below P6 , 3C etc is a internal presentation of compiler ——— 
+type of anm is : P6Animal.   
+type of cw is : 3Cow
+type of dg is : 3Dog
+type of  *anm when pointing to cw is: 3Cow
+type of  *anm when pointing to dg is: 3Dog
+
+
+——————————— USING VECTOR AND RANDOM FUNCTION —————— 
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+using namespace std;
+double randomfunction() {
+    double r ;
+    r = rand();
+    return r;
+}
+vector<double> vectorfunction(int n) {
+    vector<double> v;
+    for(int i= 0 ; i< n; ++i) {
+        v.push_back(randomfunction());
+    }
+    return v;
+}
+int main() {
+    vector<double> outputvector = vectorfunction(5);
+    for (int i=0; i < outputvector.size(); i++ ) {
+        cout << outputvector[i] << endl;
+    }
+    
+    return 0;
+}
+——— output ———— 
+16807
+2.82475e+08
+1.62265e+09
+9.84944e+08
+1.14411e+09
+
+—————————— DYNAMIC CAST and TYPEID /STATIC CAST— DEEP DIVE ——————————— 
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <typeinfo>
+using namespace std;
+
+class Shape{ 
+  public:
+    virtual void draw() const = 0 ;
+    virtual ~Shape() { }
+};
+
+class Rect : public Shape { 
+  public : 
+    virtual void draw() const { cout << "Rect" << endl; }
+};
+
+class Eclipse : public Shape { 
+  virtual void draw() const { cout << "Eclipse " << endl ; } 
+};
+
+//Square above is introduced only to demo dynamic cast functionality , it can then pull all rectangles and sqaures 
+class Square : public Rect { 
+  public:
+    virtual void draw() const { cout << "Square " << endl; }
+};
+Shape* randomShape() { 
+  switch (rand() % 3) { 
+    case 0 : 
+        return new Rect() ;
+    case 1 : 
+        return new Eclipse();
+    case 2 : 
+        return new Square();
+    }
+    return nullptr;
+}
+
+vector<Shape*> randomShapes(int num) { 
+  vector<Shape*> v;
+  for(int i = 0 ; i<num; ++i ) { 
+      v.push_back(randomShape());
+  }
+  return v;
+}
+/*
+vector<Rect*> getRects(const vector <Shape*>& all){ 
+    vector<Rect*> v;
+    for(int i = 0; i < all.size() ; ++i) { 
+        cout << typeid(*(all[i])).name() << endl;  //if we dont dereference all[i] then we wil get P5Shape as location details in output
+        if ( typeid(Rect) == typeid(*(all[i])))  { //checking typeref of Rect class matches with dereference poimnter value
+            v.push_back(static_cast<Rect*> (all[i]));  //now we know it is Rect based om if condition above, 
+            //we will cast this shape into Rect class. Issue here is it will not pull descendents of Rect. for that we wil
+            //have to use Dynamic cast as shown below
+        }
+    }
+    return v;
+}
+*/
+//-------Dynamic cast ---
+vector<Rect*> getRects(const vector <Shape*>& all){ 
+    vector<Rect*> v;
+    for(int i = 0; i < all.size() ; ++i) {  
+        Rect* r = dynamic_cast<Rect*> (all[i]); //here compiler will get all descendents of Rect, including Sqaure
+        if (r != nullptr) { 
+          v.push_back(r);
+        }
+    }
+    return v;
+}
+ 
+int main()  {
+  vector<Shape*> all = randomShapes(40);
+  vector<Rect*> rects = getRects(all);
+
+  for(int i=0 ; i< rects.size() ; ++i) { 
+    rects[i]->draw();
+  }
+  
+  for ( int i=0; i< all.size(); ++i) { 
+    delete all[i];
+  }
+
+}
+———— output ——— 
+Square 
+Rect
+Square 
+Square 
+Square 
+Rect
+Square 
+Square 
+Rect
+Rect
+Square 
+Rect
+Square 
+Square 
+Rect
+Square 
+——————————— REGEX - REGULAR EXPRESSION RULES ——————————— 
+http://www.cplusplus.com/reference/regex/ECMAScript/
+
+Sample program is follows
+#include <iostream>
+#include <string>
+#include <regex>
+using namespace std;
+
+int main ()
+{
+    string s ("Thid is e3nd of the india of tpphe era");
+    smatch m;
+    regex e ("3\\w");
+    while (regex_search (s,m,e)) {
+        for (auto x:m) cout << x << " ";
+        s = m.suffix().str();
+    }
+    return 0;
+}
+
+——————————— REGEX_MATCH - EXAMPLES——————————— 
+ 
+#include <regex>
+#include <iostream>
+using namespace std;
+
+int main() {
+    string str;
+    while(true) {
+        cin >> str;
+        regex e(“abc”);
+        bool match = regex_match(str,e);
+        cout << (match? "Matched" : "Not Matched") << endl;
+    }
+    return 0;
+}
+—— output———
+Jack 
+Not matched
+abc
+Matched 
+——————————— REGEX_MATCH - CASE SENSITIVE——————————— 
+
+        regex e(“abc”, regex_constants::icase); //icase to elimimate case sensitiveness of abc
+
+——————————— REGEX_MATCH DOT — Match any one character only after abc except new line—so one dot then one character , two then two characters——————— 
+        regex e(“abc..”);
+
+——————————— REGEX_MATCH  ?  ZERO OR ONE PRECEDING CHARACTER MATCH—————————— 
+
+        regex e(“abc?”);  
+
+Here it will match either 0 or 1 c so ab and abc will match because it has 0 and 1 c there. But aabc will not match because it has extra a at the beginning 
+
+——————————— REGEX_MATCH  *  ZERO OR MORE PRECEDING CHARACTER MATCH—————————— 
+
+        regex e("abc*”) . This will match  for ab , abc , abccc but not for aabc because there is extra a at the front. 
+
+——————————— REGEX_MATCH  +  ONE OR MORE PRECEDING CHARACTER MATCH—————————— 
+        regex e("abc+”)      So ab will not match because c is 0 but abc , abccc will match because c is one or more.
+
+
+————— REGEX_MATCH  [ ] *   ZERO OR MORE PRECEDING CHARACTER MATCH , IN THIS CASE PRECEDING CHARACTER IS WHATEVER IS IN BRACKET—————— 
+
+regex e("ab[cd]*") = This will match ab , abc , abcd , abcccdd . So match will happen on either c or d
+
+————— REGEX_MATCH  [ ] {x} *   EXACT X TIMES MATCH OF PRECEDING CHARACTER MATCH  ——— 
+regex e("ab[cd]{3}*”) = This will match abccc , abddd , abcdc  . So match will happen on either c or d or both exact 3 counts.
+
+
+————— REGEX_MATCH  [ ] {x , } *   MATCH X OR MORE OF PRECEDING CHARACTER MATCH  ——— 
+
+regex e("ab[cd]{3 , }*”)    here abcdcdddd , abcccc , abcdcdcdc is matched but not ab , abcd 
+
+————— REGEX_MATCH  [ ] {3, 5 } *   MATCH FROM 3 TILL 5 OF PRECEDING CHARACTER MATCH  ——— 
+
+————— REGEX_MATCH  [^ ] *   ANY CHARACTER NOT INSIDE THE SQUARE BRACKET , opposite of above expression 
+
+        regex e("ab[^cd]*”)  so abc , abd , accccdd all this not matched but ab , abe, abeeee is all matches 
+
+
+——————————— REGEX_MATCH  |  - This is OR operator —————————— 
+
+	regex e(“abc | de[fg]” ) — This means either abc or de[fg] match  so abc , def , deg , defg all match but not abcdefg 
+	regex e(“abc | de[ \ ] fg ]” ) — This will match abc or de[f] or de[g] or de[fg] . Here we are matching square bracket too
+
+——————————— REGEX_MATCH  ( ) GROUPS AND SEQUENCE—————————
+
+
+        regex e("(abc)de+\\1");     This means group is abc so match abcdeeabc meaning first group abc then dee with one e for + and then sequence of first group which is abc 
+        regex e("(abc)c(de+)\\2\\1”);   Here we have two groups abc and de+ and then sequence at the end which 2nd group and then 1st group so match should be abccdeedeeabc
+
+
+——————————— REGEX_MATCH  [:  : ] WORD CHARACTERS—————————
+
+	        regex e("[[:w]]+@[[:w]]+\.com");  This means [[:w]:] word character so here more than one word character due to + so number of word then @ then number of words again and then escape . and at last match for com . allangon@gmail.com will be valid match here
+
+—— CHARACTER CLASSES  —— —
+[[:alpha:]] = This is equivalent to [a-zA-Z] 
+
+[[:alnum:]] = Any letter or digit 
+
+[[:blank:]] = Space or a tab character 
+
+
+[:cntrl:] = Any control character. (These are not printable.)
+
+[:digit:] = Any decimal digit.
+
+[:graph:] = Any printable character that is not a whitespace.
+
+[:lower:] = Any lowercase letter.
+
+[:print:] = Any printable character, including whitespaces.
+
+[:punct:] = Any punctuation character.
+
+[:space:] = A whitespace character, such as a blank space, tab, or newline.
+
+[:upper:] = Any uppercase letter.
+
+ [:xdigit:] = A hexadecimal digit: This includes digits, as well as uppercase and lowercase letters.
+
+
+——————————— REGEX_SEARCH—————————
+
+regex_match(str , e) and regex_search(str, e) is in case of search it will try to see if e exists into str. 
+        regex e("abc."); 
+        bool found = regex_search(str,e);    here not just abce is found but also aaaaabce or aaaabcexxxxsss is also found because here we are searching abce into long string this will not match if we use regex_match because of extra aaaa or more xx character at the front and at end but not same in case of regex_search
+
+——————————— REGEX_SEARCH ^ FOUND BEGINNING OF THE WORD—————————
+
+        regex e("^abc"); 
+        bool found = regex_search(str,e);  here abce , abcdsdsdsd is found since abc at the beginning but not found in case of sdsdsdsabc 
+
+——————————— REGEX_SEARCH $ FOUND END OF THE WORD—————————
+
+        regex e("abc$"); 
+        bool found = regex_search(str,e);   Here asassaabc , xxabc is match since abc is at the end but not abcsdsds or sdsdabcsdsd is not found.
+
+—— MATCHING CHARACTERS ——
+
+“.”  = This will match all the single characters except for newline 
+
+[+*/-]  = This will match any one of the character from the string.. same rule for + or * or / or - 
+[ ch+ ] = example, in this case it will match C and/or H from the string . This is same as [ ch* ] , [ ch/] , [ch-]
+
+\\w = Matches any digit or letter or underscore . Example “_\\w” will show _n from the input string e_nd 
+\\W = This is exact opposite of \\w so this will not show what matches digit or letter or underscore 
+\\n = This \n will match new line 
+\\s = This matches white space
+\\S = This will match character other than white space 
+\\t =  This \t matches a tab 
+
+\\f = Matches a form feed
+\\r = Matches a carriage return 
+\\v = Matches vertical tab
+\\xF5 = This \x will match hexadecimal code F5 .. 
+\\u02f3 = This \u matches unicode character 02f3 
+\\d = This \d matches digits and display entire number before that matched digit
+“\\d2” = This will display one front digit like 42 and 82 if we are passing 420 and 8277 into input string.
+If we do “\\d2\\d” then will print one digit of front and back side of number which will be 420 and 827
+
+——  WORDS ——
+/b matches the word boundary. As shown below , following string matches any word beginning with “C” and ending with “t”, such as “cat” or “containment”. It does not match “caution”
+
+“\\bC[a-zA-Z]*t\\b”
+
+/B - This is not a word boundary. It matches word embedded into the main word but not if it is a standalone word . Following pattern matches a portion of a word beginning with “a.” It will match “at” embedded in “cat”, but it will not match “at” if it occurs as a stand-alone word.
+
+——  LINE ——
+^  = This will work only if line starts with this word “He”
+
+^ He
+
+$ = End of the line matcher 
+
+“era$” = This will match only if statement ends with era word 
+
+
+——  INDIVIDUAL CHARACTERS——
+[ abc ] = Matches individual character a or b or c 
+[^ abc] = Everything that does not match a or b or c
+
+—— RANGES ——
+[3-5] = Matches any digits from 3 to 5 .. even if we have 53 in search string, it will list it without worrying of the sequence of the digits 
+[^3-5] = This means exclude 3 to 5
+
+——  PATTERN MODIFIERS ——
+[0-9] *  = This matches zero or more instances  
+
+[0-3]+ = This matches one or more instances 
+
+(ab) | ( bb) = Match either ab or bb and not both together like abbb
+
+A{2} = Matches exactly 2 occurrence of capital A 
+A{ 2, 5} = Matches more than 2 but less than 5 occurrence of capital A 
+
+A{ 2, } = Matches three or more occurrence of capital A 
+
+(ABC){3} = Matches capital ABC three occurrence . This is same as A{3} 
+
+
+
+—— ASSERTION  —— — ^ $ \b \B ( ? = Disjunction ) ( ? ! Disjunction ) 
 
 
 ——————— ———— Posix thread—————————— 
@@ -4653,15 +5481,19 @@ This is worker_thread()
 
 ———————————————— Multi-threading —————————————— 
 
-Multithreading is a specialised form of multitasking and a multitasking is the feature that allows your computer to run two or more programs concurrently. In general, there are two types of multitasking: process-based and thread-based. Process-based multitasking handles the concurrent execution of programs. Thread-based multitasking deals with the concurrent execution of pieces of the same program.
+How to compile program - 
+g++ –std=c++11 sample.cpp -lpthread
 
-Std::thread is the thread class that represents a single thread in C++. To start a thread we simply need to create a new thread object and pass the executing code to be called (i.e, a callable object) into the constructor of the object. Once the object is created a new thread is launched which will execute the code specified in callable.
+In every C++ application there is one default main thread i.e. main() function. In C++ 11 we can create additional threads by creating objects of std::thread class.
+Each of the std::thread object can be associated with a thread.
 
-A callable can be either of the three
+We can attach a callback with the std::thread object, that will be executed when this new thread starts. These callbacks can be,
 
-A function pointer
-A function object
-A lambda expression
+1.) Function Pointer
+2.) Function Objects
+3.) Lambda functions
+
+
 After defining callable, pass it to the constructor.
 
 import<thread> 
@@ -4698,6 +5530,612 @@ auto f = [](params) {
 // Pass f and its parameters to thread 
 // object constructor as 
 std::thread thread_object(f, params); 
+
+—————————— CALLABLE - FUNCTION POINTER ———————————— 
+#include <thread>
+#include <iostream>
+using namespace std;
+
+void threadfunction() { 
+  for (int i = 0 ; i <10000 ;  i++) { 
+    cout << " thread is running , wait" << endl;
+  }
+}
+
+int main() { 
+  thread mythreadprocess(threadfunction) ;			// HERE it is not passing () of the function 
+  mythreadprocess.join();   //this will wait till thread gets finished
+  cout << "Now print this at the end" << endl;
+  return 0;
+}
+
+———— output ——— 
+> g++ sample.cpp -lpthread -std=c++11
+> ./a.out 
+ thread is running , wait
+ thread is running , wait
+ thread is running , wait
+ thread is running , wait
+ thread is running , wait
+ thread is running , wait
+ thread is running , wait
+Now print this at the end
+—————————— CALLABLE - FUNCTION OBJECT ———————————— 
+#include <thread>
+#include <iostream>
+using namespace std;
+
+class classthread {
+public : 
+  void operator()() {   //here operator () () is required syntax 
+    for(int i=0; i < 1000 ;  i++) {
+      cout << "Function object thread is running " << endl;
+    }
+  }
+}; 
+
+int main() { 
+  thread mythread((classthread()) ); //see how many brackets of mythread((())) is the syntax
+  mythread.join();
+  cout << "function object thread just got finished " << endl;
+  return 0;
+}
+———— output ——— 
+Function object thread is running 
+Function object thread is running 
+Function object thread is running 
+function object thread just got finished 
+
+
+—————————— CALLABLE - LAMBDA FUNCTION ———————————— 
+
+#include <iostream>
+#include <thread>
+int main()  
+{
+    int x = 9;
+    std::thread threadObj([]{   //this will start the thread once object created 
+            for(int i = 0; i < 10000; i++)
+                std::cout<<"... Thread running....."<<std::endl;
+            });
+            
+    for(int i = 0; i < 10000; i++)
+        std::cout<<"Display From Main Thread"<<std::endl;
+        
+    threadObj.join();     //wait till threadObj gets finished 
+    std::cout<<"Exiting from Main Thread"<<std::endl;
+    return 0;
+}
+—————output ——— 
+Display From Main Thread
+Display From Main Thread
+Display From Main Thread
+Display From Main Thread
+Display From Main Thread
+Display From Main Thread
+Display From Main Thread
+Exiting from Main Thread
+
+——————————— THREAD ID ———————————— 
+
+Each of the std::thread object has an associated ID and we can fetch using,
+std::thread::get_id()
+std::this_thread::get_id()
+
+——————————— RUNNING SEVERAL THREAD TOGETHER ———————————— 
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class threadclass { 
+public:
+  void operator() () { 
+    cout << "... thread is running with id " << this_thread::get_id() << endl;
+  }
+};
+
+ int main() { 
+
+  vector <thread> stack;
+  for ( int i=0; i< 10 ; i++ ) { 
+    stack.push_back(thread (threadclass()));
+  }
+
+  for_each(stack.begin() , stack.end() , mem_fn(&thread::join));
+  cout << " Now all threads are completed " << endl;
+  
+  return 0;
+ }
+
+——— —— output ———— 
+... thread is running with id 140667450963712
+... thread is running with id 140667442571008
+... thread is running with id 140667434178304
+... thread is running with id 140667417392896
+... thread is running with id 140667425785600
+ Now all threads are completed 
+
+——————————— DETACHING THREAD ( DAEMON OR BACKGROUND THREAD) ———————————— 
+
+Case 1: Never call join() or detach() on std::thread object with no associated executing thread
+
+
+ if(threadObj.joinable())
+    {
+        std::cout<<"Detaching Thread "<<std::endl;
+        threadObj.detach();
+    }
+
+Case 2 : Never forget to call either join or detach on a std::thread object with associated executing thread 
+#include <thread>
+#include <algorithm>
+class WorkerThread
+{
+public:
+    void operator()()     
+    {
+        std::cout<<"Worker Thread "<<std::endl;
+    }
+};
+int main()  
+{
+    std::thread threadObj( (WorkerThread()) );
+    // Program will terminate as we have't called either join or detach with the std::thread object.
+    // Hence std::thread's object destructor will terminate the program
+    return 0;
+}
+
+———————————  RESOURCE ACQUISITION IS INITIALISATION   (RAII) —EXCEPTION SAFETY ——————————— 
+Case 3 - Similarly we should not forget call either join() or detach() in case of exceptions. To prevents with we should use RESOURCE ACQUISITION IS INITIALIZATION (RAII) i.e.
+
+https://www.tomdalling.com/blog/software-design/resource-acquisition-is-initialisation-raii-explained/
+
+
+——————————— PASSING ARGUMENTS TO THREAD—————————— 
+#include <iostream>
+#include <string>
+#include <thread>
+using namespace std;
+
+void threadCallback(int x, string str)
+{
+    cout<<"Passed Number = "<<x<<endl;
+    cout<<"Passed String = "<<str<<endl;
+}
+int main()  
+{
+    int x = 10;
+    string str = "Sample String";
+    thread threadObj(threadCallback, x, str);  //see how name , parameters passed into same bracket
+    threadObj.join();
+    return 0;
+}
+————— output —————— 
+Passed Number = 10
+Passed String = Sample String
+
+——————————— HOW NOT TO PASS ARGUMENTS TO THREAD—————————— 
+Don’t pass addresses of variables from local stack to thread’s callback function. Because it might be possible that local variable in Thread 1 goes out of scope but Thread 2 is still trying to access it through it’s address.
+
+#include <iostream>
+#include <thread>
+using namespace std;
+
+void thread1(int * p)
+{
+    cout<<"because of &i , this is still been used in thread "" : p = "<<p<<endl;
+    chrono::milliseconds dura( 1000 );
+    this_thread::sleep_for( dura );
+    *p = 19;
+}
+void functioncall()
+{
+    int i = 10;
+    cout<<"Starting Thread :  "" : i = "<<i<<endl;
+    thread t(thread1,&i);
+    t.detach();
+    cout<<"Thread is detached :  "" : i = "<<i<<endl;
+}
+int main()
+{
+    functioncall();
+    chrono::milliseconds dura( 2000 );
+    this_thread::sleep_for( dura );
+    return 0;
+}
+——————— output ————— 
+Starting Thread :   : i = 10
+Thread is detached :   : i = 10
+because of &i , this is still been used in thread  : p = 0x7ffd6035d7a4
+
+
+——————————— HOW NOT TO PASS POINTER TO THREAD—————————— 
+Similarly be careful while passing pointer to memory located on heap to thread. Because it might be possible that some thread deletes that memory before new thread tries to access it.
+In such scenario accessing invalid address can cause unexpected behaviour.
+
+#include <iostream>
+#include <thread>
+using namespace std;
+
+void newThreadCallback(int * p)
+{
+    cout<<"Thread is still accessing pointer:  "" : p = "<<p<<endl;
+    chrono::milliseconds dura( 1000 );
+    this_thread::sleep_for( dura );
+    *p = 19;
+}
+void functioncall()
+{
+    int * p = new int();
+    *p = 10;
+    cout<<"Starting Thread :  "" : *p = "<<*p<<endl;
+    thread t(newThreadCallback,p);
+    t.detach();
+    delete p;
+    p = NULL;
+    cout<<"Pointer deleted and nullified " <<endl;
+}
+int main()
+{
+    functioncall();
+    chrono::milliseconds dura( 2000 );
+    this_thread::sleep_for( dura );
+    return 0;
+}
+————— output ———— 
+
+Starting Thread :   : *p = 10
+Pointer deleted and nullified 
+Thread is still accessing pointer:   : p = 0xcb4010
+
+
+———————————HOW TO PASS REFERENCE TO THREAD——————————— 
+If we pass address of x and then increment y , it still shows old value of x . 
+#include <iostream>
+#include <thread>
+void threadCallback(int const & x)
+{ 
+    int & y = const_cast<int &>(x);
+    y++;
+    std::cout<<"Inside Thread x = "<<x<<std::endl;
+}
+int main()
+{
+    int x = 9;
+    std::cout<<"In Main Thread : Before Thread Start x = "<<x<<std::endl;
+    std::thread threadObj(threadCallback, x);
+    threadObj.join();
+    std::cout<<"In Main Thread : After Thread Joins x = "<<x<<std::endl;
+    return 0;
+}
+
+——— output ——— 
+In Main Thread : Before Thread Start x = 9
+Inside Thread x = 10
+In Main Thread : After Thread Joins x = 9
+————— so we will have to use ref keyword to fix this issue —as follows —————— 
+#include <iostream>
+#include <thread>
+void threadCallback(int const & x)
+{ 
+    int & y = const_cast<int &>(x);
+    y++;
+    std::cout<<"Inside Thread x = "<<x<<std::endl;
+}
+int main()
+{
+    int x = 9;
+    std::cout<<"In Main Thread : Before Thread Start x = "<<x<<std::endl;
+    std::thread threadObj(threadCallback, std::ref(x)) ;
+    threadObj.join();
+    std::cout<<"In Main Thread : After Thread Joins x = "<<x<<std::endl;
+    return 0;
+}
+———— output ———— 
+In Main Thread : Before Thread Start x = 9
+Inside Thread x = 10
+In Main Thread : After Thread Joins x = 10
+—————————————— ASSIGNING POINTER TO MEMBER FUNCTION OF A CLASS AS THREAD FUNCTION —————————— 
+#include <iostream>
+#include <thread>
+class DummyClass {
+public:
+    DummyClass()
+    {}
+    DummyClass(const DummyClass & obj)
+    {}
+    void sampleMemberFunction(int x)
+    {
+        std::cout<<"Inside sampleMemberFunction "<<x<<std::endl;
+    }
+};
+int main() {
+ 
+    DummyClass dummyObj;
+    int x = 10;
+    std::thread threadObj(&DummyClass::sampleMemberFunction,&dummyObj, x); // here we are accessing sampleMemberFunction of class &DummyClass and &dummyObj is object of that class.
+    threadObj.join();
+    return 0;
+}
+
+——— output ——— 
+Inside sampleMemberFunction 10
+
+————————————— DATA SHARING AND RACE CONDITIONS —————————— 
+Race condition is a kind of a bug that occurs in multithreaded applications. When two or more threads perform a set of operations in parallel, that access the same memory location.  Also, one or more thread out of them modifies the data in that memory location, then this can lead to an unexpected results some times . This is called Race condition .
+
+—— Class WALLET ————— Let’s Create a Wallet class that internally maintains money and provides a service/function i.e. addMoney(). This member function increments the internal money of wallet object by specified count.
+
+class Wallet
+{
+    int mMoney;
+public:
+    Wallet() :mMoney(0){}
+    int getMoney() { return mMoney; }
+    void addMoney(int money)
+    {
+       for(int i = 0; i < money; ++i)
+       {
+          mMoney++;
+       }
+    }
+};
+
+
+—————————————— MUTEX LOCK——————————— — 
+Now Let’s create 5 threads and all these threads will share a same object of class Wallet and add 1000 to internal money using it’s addMoney() member function in parallel.
+So, if initially money in wallet is 0. Then after completion of all thread’s execution money in Wallet should be 5000.But, as all threads are modifying the shared data at same time, it might be possible that in some scenarios money in wallet at end will be much lesser than 5000.
+
+
+#include <iostream>
+#include <string>
+#include <thread>
+#include <vector>
+#include <mutex>
+using namespace std;
+
+class Wallet{ 
+    int mMoney;
+    std::mutex mutex;
+  public: 
+      Wallet() : mMoney(0) { }    //constructor
+      int getMoney() { return mMoney;}
+      void addMoney(int money) { 
+          mutex.lock() ;    //this is to lock
+          for ( int i =0 ; i< money ; ++i) { 
+            mMoney++;
+          }  
+          mutex.unlock();
+      }
+};
+
+int functioncall() { 
+  Wallet w1;
+  vector<thread> v1;
+
+  for(int i=0; i< 5; ++i) {
+    v1.push_back(thread(&Wallet::addMoney, &w1, 1000));
+  }
+  for(int i=0; i< v1.size(); i++)  { 
+      v1.at(i).join();
+  } 
+  return w1.getMoney();
+}
+
+int main() { 
+  int val = 0;
+  for(int somecounter=0 ; somecounter < 2000; somecounter++) { 
+    if ((val = functioncall()) != 5000) { 
+        cout << "counter at " << somecounter << " Money reached at " << val << endl;
+    }
+  }
+  return 0;
+}
+———— output————— 
+counter at 1922 Money reached at 4118
+counter at 1931 Money reached at 4000
+counter at 1933 Money reached at 4654
+counter at 1939 Money reached at 4643
+counter at 1946 Money reached at 4743
+counter at 1958 Money reached at 4600
+counter at 1964 Money reached at 4760
+counter at 1969 Money reached at 4724
+counter at 1971 Money reached at 4579
+counter at 1973 Money reached at 4057
+counter at 1975 Money reached at 4063
+counter at 1979 Money reached at 4616
+counter at 1996 Money reached at 4782
+
+———— We can use below guard just in case we forgot to use unlock() 
+
+std::lock_guard<std::mutex> lockGuard(mutex);
+
+—————————————— EVENT HANDLING IN THREAD—————————— — 
+Sometimes a thread needs to wait for an event to happen like a condition to become true or a task to be completed by another thread. Suppose we are building a network based application. This application does following tasks,
+
+1. Perform some handshaking with server
+2. Load Data from XML files.
+3. Do processing on data loaded from XML.
+
+As we can see that Task 1 is not dependent on any other Tasks but Task 3 is dependent on Task 2. So, it means Task 1 and Task 2 can be run in parallel by different Threads to improve the performance of application. Now, it includes two threads,
+
+Responsibilities of Thread 1 are ———
+Perform some handshaking with server.
+Wait for data to be loaded from XML by Thread 2
+Do processing on data loaded from XML.
+
+Responsibilities of Thread 2 are ———— 
+Load data from XML
+Notify another Thread i.e. waiting for the message.
+
+
+
+#include <iostream>
+#include <thread>
+#include <string>
+using namespace std;
+
+class executeclass{
+    std::mutex m_mutex;
+public:
+    bool globaltrigger;
+    executeclass(){ globaltrigger = false;};
+    void loaddata(){
+        this_thread::sleep_for(chrono::nanoseconds (1000));
+        lock_guard<mutex> guard(m_mutex);
+        cout << "Loading data now" << endl;
+        globaltrigger = true;
+    }
+    
+    void connectserver(){
+        cout << " Connect to server " << endl;
+        m_mutex.lock();
+        while(globaltrigger != true) {
+            m_mutex.unlock();
+            this_thread::sleep_for(chrono::nanoseconds (100));
+            m_mutex.lock();
+        }
+        m_mutex.unlock();
+        cout << "Process completed " << endl;
+    }
+};
+
+
+int main() {
+    executeclass c1;
+    thread t1(&executeclass::connectserver, &c1);
+    thread t2(&executeclass::loaddata, &c1);
+    t2.join();
+    t1.join();
+    
+    return 0;
+}
+———— output ————— 
+Connect to server 
+Loading data now
+Process completed 
+
+Above code has below disadvantages. Thread will keep on acquiring the lock and release it just to check the value, therefore it will consume CPU cycles and will also make Thread 1 slow, because it needs to acquire same lock to update the bool flag. We can achieve this using Condition Variables. Condition Variable is a kind Event used for signaling between 2 threads. One thread can wait for it to get signaled, while other thread can signal this.
+
+—————————————— EVENT HANDLING IN THREAD USING CONDITION VARIABLES —————————— — 
+#include <iostream>
+#include <thread>
+#include <string>
+#include <functional>
+#include <mutex>
+#include <condition_variable>
+using namespace std;
+
+class cardapp{
+public:
+    bool oksignal;
+    mutex m_mutex;
+    condition_variable cv;
+    cardapp() { oksignal = false;};
+    bool setcardfixflag() {
+            return oksignal;
+    }
+    void fixcardreader() {
+            cout << "We are fixing cardreader , wait for 1 sec" << endl;
+            this_thread::sleep_for( chrono::nanoseconds (1000));
+            lock_guard<std::mutex> lck1(m_mutex); //lock till 1000 milisecond over
+            oksignal = true;  //set the signal;
+            cv.notify_one(); //now notify swapcard thread
+    }
+    void swapcard() {
+            unique_lock<std::mutex> lck2 (m_mutex); //lock thread till wait condition satisfy
+            cv.wait(lck2, bind(&cardapp::setcardfixflag, this)); //check if oksignal is true
+            cout << "Cardreader is fixed, now folks can swape cards ?" << oksignal << endl;
+    }
+};
+
+int main() {
+    cardapp c1;
+    thread t1(&cardapp::swapcard, &c1);
+    thread t2(&cardapp::fixcardreader, &c1);
+    t1.join();
+    t2.join();
+    return 0;
+}
+
+——— output ———— 
+We are fixing cardreader , wait for 1 sec
+Cardreader is fixed, now folks can swape cards ?1
+
+—————————————— FUTURE AND PROMISE —————————— — 
+
+Above example had method setcardfixflag which was returning bool value however how about using another thread to return that value. 
+
+#include <thread>
+#include <future>
+#include <iostream>
+using namespace std;
+
+void initilizer(promise<int> *promobj) {     //this thread will return value
+    cout << "Inside thread now " << endl;
+    promobj->set_value(200);
+}
+
+int main() {
+    promise<int> promiseObj;
+    future<int> futureObj = promiseObj.get_future();
+    thread t1(initilizer, &promiseObj);
+    t1.join();
+    cout << "Value set is " << futureObj.get() << endl;
+    return 0;
+}
+————— output ———— 
+Inside thread now 
+Value set is 200
+
+——————————————ASYNC TUTORIAL —————————— — 
+std::async() is a function template that accepts a callback(i.e. function or function object) as an argument and potentially executes them asynchronously. Suppose we have to fetch some data (string) from DB and some from files in file-system. Then I need to merge both the strings and print.
+
+We can pass any callback in std::async i.e.
+
+Function Pointer
+Function Object
+Lambda Function
+
+
+
+
+
+——————————— Use of MEM_FN —BIG WRAPPER——————————— 
+#include <functional>
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Foo{ 
+  void display_name() { 
+      cout << "Name is Allan" << endl;
+  }
+  void display_id(int i) { 
+      cout << "ID is " << i << endl;
+  }
+
+  int result = 200;
+};
+
+int main() { 
+  Foo F;
+  auto wrapper1 = mem_fn(&Foo::display_name) ; //here mem_fn is pointed to address and function
+  wrapper1(F);              //here we are pointing wrapper to object and parameters
+  auto wrapper2 = mem_fn(&Foo::display_id); //auto means derive data type of wrapper word automatically based on its value
+  wrapper2(F, 90);
+  auto wrapper3 = mem_fn(&Foo::result) ;
+  cout << "Result is " << wrapper3(F) << endl;
+
+  return 0;
+}
+
+——— output ——— 
+Name is Allan
+ID is 90
+Result is 200
 
 
 
@@ -4899,12 +6337,153 @@ r = requests.post(url = API_ENDPOINT, data = data)
 pastebin_url = r.text 
 print("The pastebin URL is:%s"%pastebin_url) 
 
+—————————— AD-HOC TOPICS IN C ——————— 
+
+———————— —  NULL TERMINATED CHARACTERS —————————— 
+NULL refers to a null pointer constant which you only use for setting a pointer to point at "nothing", an invalid memory location.
+Null termination, sometimes spelled "nul" to not confuse it with the above, means putting a zero character '\0' (sometimes called "nul character") at the end of a character array to state where your string ends. It has nothing to do with NULL pointers what so ever. A better name than "null termination" might be zero termination, as that is less confusing.
+
+Use 0 for integers.
+Use NULL for pointers.
+Use '\0' to terminate a characer array and thereby making it a C string.
+
+—————————— EXECVP FUNCTION ——————— 
+The exec family of functions replaces the current running process with a new process. It can be used to run a C program by using another C program. It comes under the header file unistd.h
+
+Syntax — 
+int execvp (const char *file, char *const argv[]);
+
+file: points to the file name associated with the file being executed.
+argv:  is a null terminated array of character pointers. In example below, We will have two .C files , EXEC.c and execDemo.c and we will replace the execDemo.c with EXEC.c by calling execvp() function in execDemo.c
+
+EXEC.c program — 
+#include<stdio.h> 
+#include<unistd.h> 
+  
+int main() 
+{ 
+    printf("I am EXEC.c called by execvp() "); 
+    return 0; 
+} 
+--—compile this and second program execDemo.c  as below 
+#include<stdlib.h> 
+#include<unistd.h> 
+int main() 
+{ 
+        char *args[]={"./EXEC",NULL}; 
+        execvp(args[0],args);  
+    return 0; 
+} 
+——— output —— 
+I am EXEC.c called by execvp() 
+
+—————————— EXECV FUNCTION ——————— 
+This is similar function like EXECVP but here we specify path of the file as shown below 
+
+int execv(const char *path, char *const argv[]);
+
+Where path: should point to the path of the file being executed. So same code as earlier EXECVP .. 
+
+        char *args[]={"./EXEC",NULL}; 
+        execv(args[0],args);
+
+—————————— EXECLP AND EXECL FUNCTION ——————— 
+It serves same purpose as above function with different syntax 
+
+int execlp(const char *file, const char *arg,.../* (char  *) NULL */);
+int execl(const char *path, const char *arg,.../* (char  *) NULL */);
+
+Where const char *arg and ellipses : describe a list of one or more pointers to null-terminated strings that represent the argument list available to the executed program.
+
+—————————— EXECVPE AND EXECLE FUNCTION ——————— 
+
+It serves same purpose as above function with different syntax 
+
+int execvpe(const char *file, char *const argv[],char *const envp[]);
+
+int execle(const char *path, const char *arg, .../*, (char *) NULL, 
+char * const envp[] */);
+
+Where char * const envp[]: allow the caller to specify the environment of the executed program via the argument envp.
+envp:This argument is an array of pointers to null-terminated strings and must be terminated by a null pointer. The other functions take the environment for the new process image from the external variable environ in the calling process.
+
+—————————— CALLING SHELL SCRIPT FROM C ——————— 
+#include <stdio.h>
+#include <stdlib.h>
+#define samplescript "\
+#/bin/bash \n\
+echo \"hello\" \n\
+"
+
+int main() {
+    puts("Starting now:");
+    system(samplescript);    //it will run the script inside the c code. 
+    return 0;
+}
+——— output ——— 
+Starting now:
+hello
+
+—————————— NAMESPACE —————————— 
+
+Namespaces allow us to group named entities that otherwise would have global scope into narrower scopes, giving them namespace scope. This allows organizing the elements of programs into different logical scopes referred to by names. Namespace is a feature added in C++ and not present in C. 
+ 
+#include <iostream>
+namespace n1 { 
+  int i = 20;
+}
+namespace n2 { 
+  double j = 30;
+}
+int main() { 
+  std::cout << n1::i << '\n';
+  std::cout << n2::j << '\n';
+  return 0;
+}
+
+———— output ———  
+20 
+30
+
+————— NAMESPACE - EXAMPLE 2 - USING CLASS——— 
+#include <iostream> 
+using namespace std;   
+// Creating a namespace 
+namespace ns 
+{ 
+    void display(); 
+    class geek 
+    { 
+    public: 
+       void display(); 
+    }; 
+} 
+// Defining methods of namespace 
+void ns::geek::display() 
+{ 
+    cout << "ns::geek::display()\n"; 
+} 
+void ns::display() 
+{ 
+    cout << "ns::display()\n"; 
+} 
+// Driver code 
+int main() 
+{ 
+    ns::geek obj; 
+    ns::display(); 
+    obj.display(); 
+    return 0; 
+} 
+—————— output —————— 
+ns::display()
+ns::geek::display()
 
 
 
+——————————  PStreams  - POSIX Process Control in C++———http://pstreams.sourceforge.net———— 
 
-
-
+PStreams allows you to run another program from your C++ application and to transfer data between the two programs similar to shell pipelines. In the simplest case, a PStreams class is like a C++ wrapper for the POSIX.2 functions popen(3) and pclose(3), using C++ iostreams instead of C's stdio library. The library provides class templates in the style of the standard iostreams that can be used with any ISO C++ compiler on a POSIX platform. The classes use a streambuf class that uses fork(2) and the exec(2) family of functions to create a new process and creates up to three pipes to write/read data to/from the process.
 
 
 
